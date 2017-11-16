@@ -39,3 +39,4 @@ contract OliCoin is mortal{
         return OliCoinBalance[caddress];
     }
 }
+
