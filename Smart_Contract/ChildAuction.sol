@@ -12,25 +12,24 @@ contract DaughterAuction is mortal{
     //Bids passing to parent auction
     ParentAuction auction;
     function setParentAddress(address addr) { auction = ParentAuction(addr); }
-    function callParentBid(address daccount, uint64 damount, uint8 drate, uint8 _type)  {
-        auction.bid(daccount,damount,drate,_type);
+    function callParentBid(address daccount, uint64 damount, uint8 drate)  {
+        auction.bid(daccount,damount,drate);
     }
     //gridFee
     DynamicGridFee dgfee;
     function setDynamicGridFee(address addr) { dgfee = DynamicGridFee(addr); }
 
-    uint auctionStart;    uint biddingTime;
+    BilateralTrading btrade;
+    function setBilateralTrading(address addr) { btrade = BilateralTrading(addr); }
+
     uint8[]  priceC;    address[] _producer;    uint64  camount;
     uint8[] priceR;    address[] _consumer;    uint64  ramount;
-    uint8 bPrice;    address[] beneficiary;
-    //Local Grid Fee
-    //uint128 gridFee;
-    //Transmission Grid Fee
-    //uint128 tGridFee;
+    uint8 bPrice;
+    uint8 OliType;
+
     struct Details {
-        uint8 rate; // cents/KWh
-        uint64 amount; // Kwh
-        uint8 ptype;
+        uint8 rate; // cents/KW
+        uint64 amount; // Kw
     }
     function() payable {
     }
@@ -38,70 +37,52 @@ contract DaughterAuction is mortal{
     mapping (address => Details) GenBid;
     mapping (address => Details) ConsBid;
     //Bidders event recording
-    event NewGenBid(address gbidder, uint8 grate, uint64 gamount, uint8 _type);
-    event NewConBid(address cbidder, uint8 crate, uint64 camount, uint8 _type);
-    //Losers event recording
-    event NewGenLosBid(address glbidder, uint8 glrate, uint64 glamount, uint8 _type);
-    event NewConLosBid(address clbidder, uint8 clrate, uint64 clamount, uint8 _type);
+    event NewGenBid(address gbidder, uint8 grate, uint64 gamount);
+    event NewConBid(address cbidder, uint8 crate, uint64 camount);
     //New mcp
-    event NewMcp(uint8 cbid, uint32 cbtime);
+    event NewMcp(uint8 cbid);
     
-    struct BiDetails {
-        uint64 amount;
-        uint8 Rate;
-        uint8 powerType; //0:PV, 1:Wind, 2:CCP, 3:CHP, 4:Coal, 5:Consumer
-        uint32 contractPeriod; //in seconds
-        address consumer;
-    }
-    modifier validRequirement(uint64 oliAmount, uint8 _type) {
-        if (oliAmount > origin.get_oliPeakLoad(msg.sender,_type))
+/*
+    modifier validRequirement(uint64 oliAmount) {
+        if (oliAmount > origin.get_oliPeakLoad((msg.sender),0))
             throw;
         _;
-    }
-    //Map Bilateral Trade
-    mapping (address => BiDetails) BiTrade;
-    //Event Recording on Bilateral Trade
-    event NewBiTrade(address bproducer, uint64 bamount, uint8 brate, uint8 btype, uint32 bperiod, address bconsumer);
-    function biTadeMapping (address _producer, uint64 _amount, uint8 _rate, uint8 _type, uint32 _period, address _consumer) {
-        BiTrade[_producer] = BiDetails(_amount, _rate, _type, _period, _consumer);
-        NewBiTrade(_producer, _amount, _rate, _type, _period, _consumer);
-    }
-    function bid(uint64 _amount, uint8 _rate, uint8 _type) validRequirement(_amount,_type) {
+    }*/
+    
+    function bid(uint64 _amount, uint8 _rate) {
         //Subtracting bilateral traded amount if any
-        if((BiTrade[msg.sender].amount > 0)&&(_amount > BiTrade[msg.sender].amount)) {_amount = _amount - BiTrade[msg.sender].amount;}
+        if((btrade.get_stockAmount(msg.sender) > uint64(0))&&(_amount > btrade.get_stockAmount(msg.sender))) {_amount = _amount - btrade.get_stockAmount(msg.sender);}
         //Mapping Producer's bidding
-        if ((_type >= 0)&&(_type <= 5)&&(_amount>0)) {
-            GenBid[msg.sender] = Details ((_rate-dgfee.get_dGFee(origin.get_oliCkt(tx.origin))), _amount, _type);
-            NewGenBid (msg.sender, (_rate-dgfee.get_dGFee(origin.get_oliCkt(tx.origin))), _amount, _type);
+        if ((origin.get_oliType(msg.sender) >= uint8(0))&&(origin.get_oliType(msg.sender) <= uint8(5))&&(_amount>uint64(0))) {
+            GenBid[msg.sender] = Details (_rate, _amount); 
+            NewGenBid (msg.sender, _rate, _amount);
             _producer.push(msg.sender);
             camount += _amount;
-            if(BiTrade[msg.sender].amount > 0) {
-                coin.set_OliCoinBalance(msg.sender, int((BiTrade[msg.sender].Rate * BiTrade[msg.sender].amount)));
+            if(btrade.get_stockAmount(msg.sender) > uint64(0)) {
+                coin.set_OliCoinBalance(msg.sender, int((btrade.get_stockRate(msg.sender) * btrade.get_stockAmount(msg.sender))));
             }
         }
         //Mapping Consumer's bidding
-        if ((_type > 5)&&(_type <= 7)&&(_amount<0)) {
-            ConsBid[msg.sender] = Details ((_rate-dgfee.get_dGFee(origin.get_oliCkt(tx.origin))), _amount, _type);
-            NewConBid (msg.sender, (_rate-dgfee.get_dGFee(origin.get_oliCkt(tx.origin))), _amount, _type);
+        if ((origin.get_oliType(msg.sender) > uint8(5))&&(origin.get_oliType(msg.sender) <= uint8(7))&&(_amount>uint64(0))) {
+            ConsBid[msg.sender] = Details (_rate,_amount);
+            NewConBid (msg.sender, _rate, _amount);
             _consumer.push(msg.sender);
             ramount += _amount;
-            if(BiTrade[msg.sender].amount > 0) {
-                coin.set_OliCoinBalance(msg.sender, -int((BiTrade[msg.sender].Rate * BiTrade[msg.sender].amount)));
+            if(btrade.get_stockAmount(msg.sender) > uint64(0)) {
+                coin.set_OliCoinBalance(msg.sender, -int((btrade.get_stockRate(msg.sender) * btrade.get_stockAmount(msg.sender))));
             }
         }
     }
     //Bids Scaling
     function bidsScaling() {
-        uint cstep = camount/20;
-        uint rstep = ramount/20;
         for (var k = 0; k < _producer.length; k++) {
-            uint a = GenBid[_producer[k]].amount/cstep;
+            uint8 a = uint8(GenBid[_producer[k]].amount/uint64(camount/20));
             for (var n=0; n<a; n++) {
                 priceC.push(GenBid[_producer[k]].rate);
             }
         }
         for (var l = 0; l < _consumer.length; l++) {
-            uint b = ConsBid[_consumer[l]].amount/rstep;
+            uint8 b = uint8(ConsBid[_consumer[l]].amount/uint64(ramount/20));
             for (var m=0; m<b; m++) {
                 priceR.push(ConsBid[_consumer[l]].rate);
             }
@@ -133,22 +114,22 @@ contract DaughterAuction is mortal{
         //scaling bids
         bidsScaling();
         //producer price sorting
-        quickSort(priceC, 0, uint8(priceC.length - 1));
+        quickSort(priceC, uint8(0), uint8(priceC.length - 1));
         //consumer price sorting
-        quickSort(priceR, 0, uint8(priceR.length - 1));
+        quickSort(priceR, uint8(0), uint8(priceR.length - 1));
         //Break-Even Finder
         var o = (priceR.length - 1);
         for (var p = 0; p < priceC.length; p++) {
             if (priceC[p] > priceR[o]) {
                 if (priceC[p-1] == priceR[o+1]) {
                     bPrice = priceC[p-1];
-                    NewMcp(bPrice, uint32(now));
+                    NewMcp(bPrice);
                     mcp = true;
                     break;
                 }
                 if (priceC[p-1] < priceR[o+1]) {
                     bPrice = ((priceC[p-1] + priceR[o+1]) / 2);
-                    NewMcp(bPrice, uint32(now));
+                    NewMcp(bPrice);
                     mcp = true;
                     break;
                 }
@@ -156,38 +137,36 @@ contract DaughterAuction is mortal{
             }
             o -=1;
         }
-    
+        
         //Losers/Winners Mapping
         if (mcp == true) {
             for (var q = 0; q < _producer.length; q++){
                 if(GenBid[_producer[q]].rate > bPrice){
-                    NewGenLosBid (_producer[q], GenBid[_producer[q]].rate, GenBid[_producer[q]].amount, GenBid[_producer[q]].ptype);
-                    callParentBid(_producer[q], GenBid[_producer[q]].amount, GenBid[_producer[q]].rate, GenBid[_producer[q]].ptype);
+                    auction.bid(_producer[q], GenBid[_producer[q]].amount, GenBid[_producer[q]].rate);
                 }
                 else {
-                    coin.set_OliCoinBalance(_producer[q], int((GenBid[_producer[q]].rate * GenBid[_producer[q]].amount)));
+                    coin.set_OliCoinBalance(_producer[q], int(((GenBid[_producer[q]].rate-dgfee.get_dGFee(_producer[q])) * GenBid[_producer[q]].amount)));
+//                    coin.set_OliCoinBalance(origin.get_gsoAddr(origin.get_oliTrafoid(_producer[q])), int(dgfee.get_dGFee(_producer[q])*GenBid[_producer[q]].amount));
                     dgfee.set_cktcamount(_producer[q], GenBid[_producer[q]].amount);
                 }
             }
             for (var r = 0; r < _consumer.length; r++){
                 if(ConsBid[_consumer[r]].rate < bPrice){
-                    NewConLosBid (_consumer[r], ConsBid[_consumer[r]].rate, ConsBid[_consumer[r]].amount,GenBid[_producer[q]].ptype);
-                    callParentBid(_consumer[r], ConsBid[_consumer[r]].amount, ConsBid[_consumer[r]].rate,GenBid[_producer[q]].ptype);
+                    auction.bid(_consumer[r], ConsBid[_consumer[r]].amount, ConsBid[_consumer[r]].rate);
                 }
                 else {
-                    coin.set_OliCoinBalance(_consumer[r], -int((ConsBid[_consumer[r]].rate * ConsBid[_consumer[r]].amount)));
+                    coin.set_OliCoinBalance(_consumer[r], -int(((ConsBid[_consumer[r]].rate-dgfee.get_dGFee(_consumer[r])) * ConsBid[_consumer[r]].amount)));
+ //                   coin.set_OliCoinBalance(origin.get_gsoAddr(origin.get_oliTrafoid(_consumer[r])), int(dgfee.get_dGFee(_consumer[r])*GenBid[_consumer[r]].amount));
                     dgfee.set_cktramount(_consumer[r], GenBid[_consumer[r]].amount);
                 }
             }
         }
         else {
             for (var s = 0; s < _producer.length; s++){
-                    NewGenLosBid (_producer[q], GenBid[_producer[q]].rate, GenBid[_producer[q]].amount,GenBid[_producer[q]].ptype);
-                    callParentBid(_producer[q], GenBid[_producer[q]].amount, GenBid[_producer[q]].rate,GenBid[_producer[q]].ptype);
+                    auction.bid(_producer[s], GenBid[_producer[s]].amount, GenBid[_producer[s]].rate);
             }
             for (var t = 0; t < _consumer.length; t++){
-                    NewConLosBid (_consumer[r], ConsBid[_consumer[r]].rate, ConsBid[_consumer[r]].amount,GenBid[_producer[q]].ptype);
-                    callParentBid(_consumer[r], ConsBid[_consumer[r]].amount, ConsBid[_consumer[r]].rate,GenBid[_producer[q]].ptype);
+                    auction.bid(_consumer[t], ConsBid[_consumer[t]].amount, ConsBid[_consumer[t]].rate);
             }
         }
         resett();
@@ -201,16 +180,16 @@ contract DaughterAuction is mortal{
         delete _consumer;
         delete camount;
         delete ramount;
-        mcp = false;        
+        mcp = false;
+        dgfee.set_dgridFee(origin.get_oliTrafoid(tx.origin));
     }
-    
-    
+
     //consumer price array
-    function getR_Array() returns(uint8[]) {
+    function get_RArray() returns(uint8[]) {
         return priceR;
     }
     //producer price array
-    function getC_Array() returns(uint8[]) {
+    function get_CArray() returns(uint8[]) {
         return priceC;
     }
     //Get Break-Even Point

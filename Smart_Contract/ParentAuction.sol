@@ -14,8 +14,8 @@ contract ParentAuction is mortal{
     function setDynamicGridFee(address addr) { dgfee = DynamicGridFee(addr); }
 
     uint auctionStart;    uint biddingTime;
-    uint8[]  priceC;    address[] _producer;    uint  camount;
-    uint8[] priceR;    address[] _consumer;    uint  ramount;
+    uint8[]  priceC;    address[] _producer;    uint64 camount;
+    uint8[] priceR;    address[] _consumer;    uint64  ramount;
     uint8 bPrice;    address[] beneficiary;
     struct Details {
         uint8 rate; // cents/KWh
@@ -34,18 +34,18 @@ contract ParentAuction is mortal{
     event NewGenLosBid(address glbidder, uint8 glrate, uint64 glamount);
     event NewConLosBid(address clbidder, uint8 clrate, uint64 clamount);
     //New mcp
-    event NewMcp(uint8 cbid, uint32 cbtime);
+    event NewMcp(uint8 cbid);
 
-    modifier validRequirement(uint64 oliAmount, uint8 _type) {
-        if (oliAmount > origin.get_oliPeakLoad(msg.sender,_type))
+/*    modifier validRequirement(uint64 oliAmount) {
+        if (oliAmount > origin.get_oliPeakLoad(msg.sender,0))
             throw;
         _;
-    }
+    }*/
 
-    function bid(address baddress, uint64 _amount, uint8 _rate, uint8 _type) validRequirement(_amount,_type) {
+    function bid(address baddress, uint64 _amount, uint8 _rate) {
         //Mapping Producer's bidding
-        if ((_type >= 0)&&(_type <= 5)) {
-            GenBid[baddress] = Details (_rate,_amount);
+        if ((origin.get_oliType(baddress) >= 0)&&(origin.get_oliType(baddress) <= 5)) {
+            GenBid[baddress] = Details (_rate,_amount); //-dgfee.get_dGFee(msg.sender)
             NewGenBid (baddress, _rate, _amount);
             _producer.push(baddress);
             camount += _amount;
@@ -109,11 +109,13 @@ contract ParentAuction is mortal{
             if (priceC[p] > priceR[o]) {
                 if (priceC[p-1] == priceR[o+1]) {
                     bPrice = priceC[p-1];
+                    NewMcp(priceC[p-1]);
                     mcp = true;
                     break;
                 }
                 if (priceC[p-1] < priceR[o+1]) {
                     bPrice = ((priceC[p-1] + priceR[o+1]) / 2);
+                    NewMcp(((priceC[p-1] + priceR[o+1]) / 2));
                     mcp = true;
                     break;
                 }
@@ -154,14 +156,15 @@ contract ParentAuction is mortal{
     }
     
     //reset
-    function resett() onlyowner {
+    function resett() {
         delete priceC;
         delete priceR;
         delete _producer;
         delete _consumer;
         delete camount;
         delete ramount;
-        mcp = false;        
+        mcp = false;
+        dgfee.set_tgridFee(origin.get_oliTrafoid(tx.origin));
     }    
     
     //consumer price array
