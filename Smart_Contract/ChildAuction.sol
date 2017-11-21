@@ -25,20 +25,17 @@ contract DaughterAuction is mortal{
     uint8[]  priceC;    address[] _producer;    uint64  camount;
     uint8[] priceR;    address[] _consumer;    uint64  ramount;
     uint8 bPrice;
-    uint8 OliType;
 
     struct Details {
         uint8 rate; // cents/KW
         uint64 amount; // Kw
     }
-    function() payable {
-    }
     //Bidders Mapping
     mapping (address => Details) GenBid;
     mapping (address => Details) ConsBid;
     //Bidders event recording
-    event NewGenBid(address gbidder, uint8 grate, uint64 gamount);
-    event NewConBid(address cbidder, uint8 crate, uint64 camount);
+    event NewGenBid(uint8 grate, uint64 gamount);
+    event NewConBid(uint8 crate, uint64 camount);
     //New mcp
     event NewMcp(uint8 cbid);
     
@@ -55,7 +52,7 @@ contract DaughterAuction is mortal{
         //Mapping Producer's bidding
         if ((origin.get_oliType(msg.sender) >= uint8(0))&&(origin.get_oliType(msg.sender) <= uint8(5))&&(_amount>uint64(0))) {
             GenBid[msg.sender] = Details (_rate, _amount); 
-            NewGenBid (msg.sender, _rate, _amount);
+            NewGenBid (_rate, _amount);
             _producer.push(msg.sender);
             camount += _amount;
             if(btrade.get_stockAmount(msg.sender) > uint64(0)) {
@@ -65,7 +62,7 @@ contract DaughterAuction is mortal{
         //Mapping Consumer's bidding
         if ((origin.get_oliType(msg.sender) > uint8(5))&&(origin.get_oliType(msg.sender) <= uint8(7))&&(_amount>uint64(0))) {
             ConsBid[msg.sender] = Details (_rate,_amount);
-            NewConBid (msg.sender, _rate, _amount);
+            NewConBid (_rate, _amount);
             _consumer.push(msg.sender);
             ramount += _amount;
             if(btrade.get_stockAmount(msg.sender) > uint64(0)) {
@@ -145,8 +142,10 @@ contract DaughterAuction is mortal{
                     auction.bid(_producer[q], GenBid[_producer[q]].amount, GenBid[_producer[q]].rate);
                 }
                 else {
+                    //Reward=rate-gFee
                     coin.set_OliCoinBalance(_producer[q], int(((GenBid[_producer[q]].rate-dgfee.get_dGFee(_producer[q])) * GenBid[_producer[q]].amount)));
-//                    coin.set_OliCoinBalance(origin.get_gsoAddr(origin.get_oliTrafoid(_producer[q])), int(dgfee.get_dGFee(_producer[q])*GenBid[_producer[q]].amount));
+                    //GSO reward
+                    coin.set_OliCoinBalance(origin.get_gsoAddr(origin.get_oliTrafoid(_producer[q])), int(dgfee.get_dGFee(_producer[q])*GenBid[_producer[q]].amount));
                     dgfee.set_cktcamount(_producer[q], GenBid[_producer[q]].amount);
                 }
             }
@@ -155,8 +154,10 @@ contract DaughterAuction is mortal{
                     auction.bid(_consumer[r], ConsBid[_consumer[r]].amount, ConsBid[_consumer[r]].rate);
                 }
                 else {
-                    coin.set_OliCoinBalance(_consumer[r], -int(((ConsBid[_consumer[r]].rate-dgfee.get_dGFee(_consumer[r])) * ConsBid[_consumer[r]].amount)));
- //                   coin.set_OliCoinBalance(origin.get_gsoAddr(origin.get_oliTrafoid(_consumer[r])), int(dgfee.get_dGFee(_consumer[r])*GenBid[_consumer[r]].amount));
+                    //Payable=rate+gfee
+                    coin.set_OliCoinBalance(_consumer[r], -int(((ConsBid[_consumer[r]].rate+dgfee.get_dGFee(_consumer[r])) * ConsBid[_consumer[r]].amount)));
+                    //GSO Reward
+                    coin.set_OliCoinBalance(origin.get_gsoAddr(origin.get_oliTrafoid(_consumer[r])), int(dgfee.get_dGFee(_consumer[r])*GenBid[_consumer[r]].amount));
                     dgfee.set_cktramount(_consumer[r], GenBid[_consumer[r]].amount);
                 }
             }
@@ -183,7 +184,7 @@ contract DaughterAuction is mortal{
         mcp = false;
         dgfee.set_dgridFee(origin.get_oliTrafoid(tx.origin));
     }
-
+/*
     //consumer price array
     function get_RArray() returns(uint8[]) {
         return priceR;
@@ -207,5 +208,5 @@ contract DaughterAuction is mortal{
     }
     function get_consumer() constant returns (address[]) {
         return _consumer;
-    }
+    }*/
 }
