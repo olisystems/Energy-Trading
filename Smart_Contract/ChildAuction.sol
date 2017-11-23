@@ -1,7 +1,3 @@
-pragma solidity ^0.4.11;
-
-import "github.com/ethereum/solidity/std/mortal.sol";
-
 contract DaughterAuction is mortal{
     //Account Details Callback function
     OliOrigin origin;
@@ -34,8 +30,8 @@ contract DaughterAuction is mortal{
     mapping (address => Details) GenBid;
     mapping (address => Details) ConsBid;
     //Bidders event recording
-    event NewGenBid(uint8 grate, uint64 gamount);
-    event NewConBid(uint8 crate, uint64 camount);
+    event NewGenBid(address gaddr, uint8 grate, uint64 gamount);
+    event NewConBid(address caddr, uint8 crate, uint64 camount);
     //New mcp
     event NewMcp(uint8 cbid);
     
@@ -52,7 +48,7 @@ contract DaughterAuction is mortal{
         //Mapping Producer's bidding
         if ((origin.get_oliType(msg.sender) >= uint8(0))&&(origin.get_oliType(msg.sender) <= uint8(5))&&(_amount>uint64(0))) {
             GenBid[msg.sender] = Details (_rate, _amount); 
-            NewGenBid (_rate, _amount);
+            NewGenBid (msg.sender,_rate, _amount);
             _producer.push(msg.sender);
             camount += _amount;
             if(btrade.get_stockAmount(msg.sender) > uint64(0)) {
@@ -62,7 +58,7 @@ contract DaughterAuction is mortal{
         //Mapping Consumer's bidding
         if ((origin.get_oliType(msg.sender) > uint8(5))&&(origin.get_oliType(msg.sender) <= uint8(7))&&(_amount>uint64(0))) {
             ConsBid[msg.sender] = Details (_rate,_amount);
-            NewConBid (_rate, _amount);
+            NewConBid (msg.sender, _rate, _amount);
             _consumer.push(msg.sender);
             ramount += _amount;
             if(btrade.get_stockAmount(msg.sender) > uint64(0)) {
@@ -139,7 +135,7 @@ contract DaughterAuction is mortal{
         if (mcp == true) {
             for (var q = 0; q < _producer.length; q++){
                 if(GenBid[_producer[q]].rate > bPrice){
-                    auction.bid(_producer[q], GenBid[_producer[q]].amount, GenBid[_producer[q]].rate);
+                    //auction.bid(_producer[q], GenBid[_producer[q]].amount, GenBid[_producer[q]].rate);
                 }
                 else {
                     //Reward=rate-gFee
@@ -151,7 +147,7 @@ contract DaughterAuction is mortal{
             }
             for (var r = 0; r < _consumer.length; r++){
                 if(ConsBid[_consumer[r]].rate < bPrice){
-                    auction.bid(_consumer[r], ConsBid[_consumer[r]].amount, ConsBid[_consumer[r]].rate);
+                    //auction.bid(_consumer[r], ConsBid[_consumer[r]].amount, ConsBid[_consumer[r]].rate);
                 }
                 else {
                     //Payable=rate+gfee
@@ -164,10 +160,10 @@ contract DaughterAuction is mortal{
         }
         else {
             for (var s = 0; s < _producer.length; s++){
-                    auction.bid(_producer[s], GenBid[_producer[s]].amount, GenBid[_producer[s]].rate);
+                    //auction.bid(_producer[s], GenBid[_producer[s]].amount, GenBid[_producer[s]].rate);
             }
             for (var t = 0; t < _consumer.length; t++){
-                    auction.bid(_consumer[t], ConsBid[_consumer[t]].amount, ConsBid[_consumer[t]].rate);
+                    //auction.bid(_consumer[t], ConsBid[_consumer[t]].amount, ConsBid[_consumer[t]].rate);
             }
         }
         resett();
@@ -184,7 +180,7 @@ contract DaughterAuction is mortal{
         mcp = false;
         dgfee.set_dgridFee(origin.get_oliTrafoid(tx.origin));
     }
-/*
+
     //consumer price array
     function get_RArray() returns(uint8[]) {
         return priceR;
@@ -208,5 +204,5 @@ contract DaughterAuction is mortal{
     }
     function get_consumer() constant returns (address[]) {
         return _consumer;
-    }*/
+    }
 }
