@@ -4,7 +4,7 @@
 <head>
     <title>OLI SharEnergy</title>
     <script src="web3.js/dist/web3.min.js"></script>
-
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script type="text/javascript">
 
         //OLIOrigin Contract
@@ -16,8 +16,8 @@
         var contract_Coin_abi = [{"constant":false,"inputs":[],"name":"kill","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_amount","type":"uint64"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"caddress","type":"address"}],"name":"get_coinBalance","outputs":[{"name":"","type":"int256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_account","type":"address"},{"name":"_change","type":"int256"}],"name":"set_OliCoinBalance","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_contract","type":"address"},{"name":"_tf","type":"bool"}],"name":"set_ContractAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_value","type":"uint256"}],"name":"deposit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_from","type":"address"},{"indexed":true,"name":"_to","type":"address"},{"indexed":false,"name":"_value","type":"uint64"}],"name":"Transfer","type":"event"}];
 
         //OLIDaughter contract
-        var contract_daughter_address = "0x54fb563e0441669109d8b85ea2982ecfaa15a2dd";
-        var contract_daughter_abi = [{"constant":false,"inputs":[{"name":"_step","type":"uint8"}],"name":"set_step","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setOliOrigin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_amount","type":"uint64"},{"name":"_rate","type":"uint8"}],"name":"bid","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setBilateralTrading","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"get_CArray","outputs":[{"name":"","type":"uint8[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setOliCoin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setDynamicGridFee","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"resett","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"get_producer","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"get_RArray","outputs":[{"name":"","type":"uint8[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"get_consumer","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"bidsScaling","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"daccount","type":"address"},{"name":"damount","type":"uint64"},{"name":"drate","type":"uint8"}],"name":"callParentBid","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"get_step","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"get_bValue","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"breakEven","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setParentAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"gaddr","type":"address"},{"indexed":false,"name":"grate","type":"uint8"},{"indexed":false,"name":"gamount","type":"uint64"}],"name":"NewGenBid","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"caddr","type":"address"},{"indexed":false,"name":"crate","type":"uint8"},{"indexed":false,"name":"camount","type":"uint64"}],"name":"NewConBid","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"cbid","type":"uint8"}],"name":"NewMcp","type":"event"}];
+        var contract_daughter_address = "0x1fa0e615079dc94c1acf60fc8945fa29f8b07206";
+        var contract_daughter_abi = [{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setOliOrigin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_amount","type":"uint16"},{"name":"_rate","type":"uint8"}],"name":"bid","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setBilateralTrading","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setOliCoin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setDynamicGridFee","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"resett","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"get_producer","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_rate","type":"uint8"}],"name":"get_sRate","outputs":[{"name":"","type":"uint16"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"get_consumer","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_rate","type":"uint8"}],"name":"get_dRate","outputs":[{"name":"","type":"uint16"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"maxRate","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"breakEven","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"setParentAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"gaddr","type":"address"},{"indexed":false,"name":"grate","type":"uint8"},{"indexed":false,"name":"gamount","type":"uint16"}],"name":"NewGenBid","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"caddr","type":"address"},{"indexed":false,"name":"crate","type":"uint8"},{"indexed":false,"name":"camount","type":"uint16"}],"name":"NewConBid","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"cbid","type":"uint8"}],"name":"NewMcp","type":"event"}];
 
         if (typeof web3 !== 'undefined') {
             web3 = new Web3(web3.currentProvider);
@@ -74,9 +74,9 @@
         }
 
         var mcp;
-
+        var cycle = [];
+        var runn = 0;
         function watchMCP() {
-
             mcp = contract_daughter_instance.NewMcp({fromBlock: 'latest' , toBlock:'latest'});
             console.log(mcp);
             mcp.watch(function(error, result) {
@@ -85,14 +85,107 @@
                 } else {
                     document.getElementById("pbid").innerHTML ='&nbsp';
                     document.getElementById("cbid").innerHTML ='&nbsp';
-                    console.log(result);
+                    var info = web3.eth.getBlock('latest');
+                    var date = new Date((info.timestamp)*1000);
+
+                    // Hours part from the timestamp
+                    var hours = date.getHours();
+                    // Minutes part from the timestamp
+                    var minutes = "0" + date.getMinutes();
+                    // Seconds part from the timestamp
+                    var seconds = "0" + date.getSeconds();
+
+                    // Will display time in 10:30:23 format
+                    var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
+                    //console.log(result);
                     document.getElementById("mcp").innerHTML += "<br />" + "<br />" +
-                        "New MCP: " + result.args.cbid;
+                        "New MCP: " + result.args.cbid + " | Time:" + formattedTime;
+
+                    xaxis.push(td);
+                    xpvaxis.push(td);
+                    td++;
+                    yaxis.push(parseInt(result.args.cbid));
+                    ypvaxis.push(gamt);
+                    /*console.log(xaxis);
+                    console.log(yaxis);
+                    console.log(xpvaxis);
+                    console.log(ypvaxis);
+                    console.log(result.blockNumber);*/
+                    if (runn == 0) {
+                        runn++;
+                        cycle[0] = result.blockNumber;
+                        cycle[1] = result.blockNumber;
+                        console.log(cycle);
+                    }
+                    else {
+                        cycle[0] = cycle[1];
+                        cycle[1] = result.blockNumber;
+                        //console.log(cycle);
+                        contract_daughter_instance.NewGenBid({}, {fromBlock: cycle[0] , toBlock: cycle[1]}).get(function(error, result) {
+                            if(error) {
+                                console.error(error);
+                            } else {
+                                //xgbidaxis = [];
+                                //ygbidaxis = [];
+                                //console.log(result);
+
+                                for (i = 0; i < result.length; i++) {
+                                    ygbidaxis.push(parseInt(result[i].args.grate));
+                                }
+                                ygbidaxis.sort(function(a, b){return a - b});
+                                //console.log(ygbidaxis);
+                                for (j = 0; j < result.length; j++) {
+                                    xgbidaxis[parseInt(ygbidaxis.indexOf(parseInt(result[j].args.grate)))] = parseInt(result[j].args.gamount);
+                                }
+                                //console.log(xgbidaxis);
+                                for (k = 1; k < xgbidaxis.length; k++) {
+                                    xgbidaxis[k] += xgbidaxis[k-1];
+                                }
+                                ygbidaxis.unshift(parseInt(ygbidaxis[0]));
+                                xgbidaxis.unshift(parseInt(0));
+                                console.log(ygbidaxis);
+                                console.log(xgbidaxis);
+                                //Plotly.newPlot('moa', biddata, layout3);
+                            }
+                        });
+                        contract_daughter_instance.NewConBid({}, {fromBlock: cycle[0] , toBlock: cycle[1]}).get(function(error, result) {
+                            if(error) {
+                                console.error(error);
+                            } else {
+                                for (l = 0; l < result.length; l++) {
+                                    ycbidaxis.push(parseInt(result[l].args.crate));
+                                }
+                                ycbidaxis.sort(function(a, b){return b - a});
+                                //console.log(ygbidaxis);
+                                for (m = 0; m < result.length; m++) {
+                                    xcbidaxis[parseInt(ycbidaxis.indexOf(parseInt(result[m].args.crate)))] = parseInt(result[m].args.camount);
+                                }
+                                //console.log(xgbidaxis);
+                                for (m = 1; m < xcbidaxis.length; m++) {
+                                    xcbidaxis[m] += xcbidaxis[m-1];
+                                }
+                                ycbidaxis.unshift(parseInt(ycbidaxis[0]));
+                                xcbidaxis.unshift(parseInt(0));
+                                console.log(ycbidaxis);
+                                console.log(xcbidaxis);
+                                Plotly.newPlot('moa', biddata, layout3);
+                                xgbidaxis.length = 0;
+                                ygbidaxis.length = 0;
+                                xcbidaxis.length = 0;
+                                ycbidaxis.length = 0;
+
+
+                            }
+                        });
+
+                    }
+                    mcpgraph();
+                    pvgraph();
+                    //bidgraph();
                 }
             });
         }
-
-
 
         function stopWatchingMCP() {
             if(mcp !== undefined) {
@@ -101,7 +194,7 @@
         }
 
         var pbid;
-
+        var gamt;
         function watchpbid() {
 
             pbid = contract_daughter_instance.NewGenBid({fromBlock: 'latest' , toBlock:'latest'});
@@ -110,16 +203,17 @@
                 if(error) {
                     console.log(error);
                 } else {
-                    console.log(result);
+                    //console.log(result);
 
                     document.getElementById("pbid").innerHTML += "<br />" + "<br />" +
                         "Address: " + result.args.gaddr + " | Rate: " + result.args.grate + " | Amount: " + result.args.gamount;
-
+                    if (result.args.gaddr == web3.eth.accounts[1]){
+                        gamt = parseInt(result.args.gamount);
+                        //console.log(gamt);
+                    }
                 }
             });
         }
-
-
 
         function stopWatchingpbid() {
             if(pbid !== undefined) {
@@ -130,29 +224,121 @@
         var cbid;
 
         function watchcbid() {
-
             cbid = contract_daughter_instance.NewConBid({fromBlock: 'latest' , toBlock:'latest'});
             console.log(cbid);
             cbid.watch(function(error, result) {
                 if(error) {
                     console.log(error);
                 } else {
-                    console.log(result);
-
+                    //console.log(result);
                     document.getElementById("cbid").innerHTML += "<br />" + "<br />" +
                         "Address: " + result.args.caddr + " | Rate: " + result.args.crate + " | Amount: " + result.args.camount;
-
                 }
             });
         }
-
-
 
         function stopWatchingcbid() {
             if(cbid !== undefined) {
                 cbid.stopWatching();
             }
         }
+        var td = 0;
+        var xaxis = [];
+        var yaxis = [];
+        var trace = {
+            x: xaxis,
+            y: yaxis,
+            mode: 'lines+markers',
+            name: 'hv',
+            line: {shape: 'hv'},
+            type: 'scatter'
+        };
+
+        var mcpdata = [trace];
+
+        var layout = {
+            title: 'Market Clearing Price',
+            xaxis: {
+                title: 'Time (cycles)'
+            },
+            yaxis: {
+                title: 'cents/KW)'
+            }
+        };
+
+        function mcpgraph(){
+            Plotly.newPlot('mcpg', mcpdata, layout);
+        }
+
+        var xpvaxis = [];
+        var ypvaxis = [];
+        var trace2 = {
+            x: xpvaxis,
+            y: ypvaxis,
+            mode: 'lines+markers',
+            name: 'hv',
+            line: {shape: 'hv'},
+            type: 'scatter'
+        };
+
+        var pvdata = [trace2];
+
+        var layout2 = {
+            title: 'PV Power Production',
+            xaxis: {
+                title: 'Time (cycles)'
+            },
+            yaxis: {
+                title: '(KW)'
+            }
+        };
+
+
+        function pvgraph(){
+            Plotly.newPlot('pvg', pvdata, layout2);
+        }
+
+        //Merit Order Graph
+        var xgbidaxis = [];
+        var ygbidaxis = [];
+        var trace3 = {
+            x: xgbidaxis,
+            y: ygbidaxis,
+            mode: 'lines+markers',
+            name: 'Producer',
+            line: {shape: 'vh'},
+            type: 'scatter'
+        };
+
+        var xcbidaxis = [];
+        var ycbidaxis = [];
+        var trace4 = {
+            x: xcbidaxis,
+            y: ycbidaxis,
+            mode: 'lines+markers',
+            name: 'consumer',
+            line: {shape: 'vh'},
+            type: 'scatter'
+        };
+
+
+        var biddata = [trace3, trace4];
+
+        var layout3 = {
+            title: 'Merit Order',
+            xaxis: {
+                title: 'Power (W)'
+            },
+            yaxis: {
+                title: 'cents/KW'
+            }
+        };
+
+
+        function bidgraph(){
+            Plotly.newPlot('moa', biddata, layout3);
+        }
+
 
     </script>
 
@@ -179,6 +365,15 @@
 <br />
 <button onclick="watchcbid()">Watch Consumer's Bid Update</button>
 <button onclick="stopWatchingcbid()">Stop Watching Consumer's Bid</button>
+<br />
+<button onclick="mcpgraph()">Watch Real Time MCP</button>
+<button onclick="stopWatchRealTime()">Stop Real Time</button>
+<br />
+<button onclick="pvgraph()">Watch Real Time PV Production</button>
+<button onclick="stopWatchRealTime()">Stop Real Time</button>
+<br />
+<button onclick="bidgraph()">Watch Merit Order Graph</button>
+<button onclick="stopWatchRealTime()">Stop Real Time</button>
 
 
 <br />
@@ -202,6 +397,12 @@
 <br />
 <h2>Market Clearing Price:</h2>
 <div id="mcp"></div>
+<h2>Merit Order Affect</h2>
+<div id="moa"></div>
+<h2>Market Clearing Price Graph</h2>
+<div id="mcpg"></div>
+<h2>PV Production</h2>
+<div id="pvg"></div>
 
 
 
