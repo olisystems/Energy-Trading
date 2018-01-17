@@ -9,7 +9,7 @@ username="kabknwly"
 password="3JmAU0Tm9nUr"
 power=0
 
-url= "http://localhost:1080/api/1/power/now"
+url= "http://localhost:1080/api/all/power/now"
 while 1:
         json_obj= urllib2.urlopen(url)
         data = json.load(json_obj)
