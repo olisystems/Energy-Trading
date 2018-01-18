@@ -2,7 +2,7 @@ pragma solidity ^0.4.11;
 
 import "github.com/ethereum/solidity/std/mortal.sol";
 
-contract DaughterAuction is mortal{
+contract ParentAuction is mortal{
     //Account Details Callback function
     OliOrigin origin;
     function setOliOrigin(address addr) { origin = OliOrigin(addr); }
@@ -16,13 +16,12 @@ contract DaughterAuction is mortal{
     DynamicGridFee dgfee;
     function setDynamicGridFee(address addr) { dgfee = DynamicGridFee(addr); }
 
-    BilateralTrading btrade;
-    function setBilateralTrading(address addr) { btrade = BilateralTrading(addr); }
+    //uint32 tid;
+    mapping (uint32 => bool) tid;
     
-    uint32 tid;
-    
-    function DaughterAuction() {
-        tid=67377;
+    //set conntected transformer
+    function set_ContractAddress(uint32 _tid, bool _tf) onlyowner{
+        tid[_tid] = _tf;
     }
 
     address[] _producer;    address[] _consumer;
@@ -44,11 +43,8 @@ contract DaughterAuction is mortal{
     event NewMcp(uint8 cbid);
 
     function bid(uint16 _amount, uint8 _rate) {
-        //Subtracting bilateral traded amount if any
-        //if((btrade.get_stockAmount(msg.sender) > uint16(0))&&(_amount > btrade.get_stockAmount(msg.sender))) {_amount = _amount - btrade.get_stockAmount(msg.sender);}
         //Mapping Producer's bidding
-        //
-        if ((origin.get_oliType(msg.sender)>=uint8(0))&&(origin.get_oliType(msg.sender)<=uint8(5))&&(_amount>uint16(0))&&(tid==(origin.get_oliTrafoid(tx.origin)))) {
+        if ((origin.get_oliType(msg.sender)>=uint8(0))&&(origin.get_oliType(msg.sender)<=uint8(5))&&(_amount>uint16(0))&&(tid[origin.get_oliTrafoid(tx.origin)])) {
             GenBid[msg.sender] = Details (_rate, _amount); 
             if (_rate > maxRate) {
                 maxRate = _rate;
@@ -59,12 +55,9 @@ contract DaughterAuction is mortal{
             SRate[_rate] += _amount;
             NewGenBid (msg.sender,_rate, _amount);
             _producer.push(msg.sender);
-            /*if(btrade.get_stockAmount(msg.sender) > uint16(0)) {
-                coin.set_OliCoinBalance(msg.sender, int32((btrade.get_stockRate(msg.sender) * btrade.get_stockAmount(msg.sender))));
-            }*/
         }
         //Mapping Consumer's bidding
-        if ((origin.get_oliType(msg.sender) > uint8(5))&&(origin.get_oliType(msg.sender) <= uint8(7))&&(_amount>uint16(0))&&(tid==(origin.get_oliTrafoid(tx.origin)))) {
+        if ((origin.get_oliType(msg.sender) > uint8(5))&&(origin.get_oliType(msg.sender) <= uint8(7))&&(_amount>uint16(0))&&(tid[origin.get_oliTrafoid(tx.origin)])) {
             ConsBid[msg.sender] = Details (_rate,_amount);
             if (_rate > maxRate) {
                 maxRate = _rate;
@@ -75,10 +68,6 @@ contract DaughterAuction is mortal{
             DRate[_rate] += _amount;
             NewConBid (msg.sender, _rate, _amount);
             _consumer.push(msg.sender);
-            /*
-            if(btrade.get_stockAmount(msg.sender) > uint16(0)) {
-                coin.set_OliCoinBalance(msg.sender, -int32((btrade.get_stockRate(msg.sender) * btrade.get_stockAmount(msg.sender))));
-            }*/
         }
     }
 
@@ -109,7 +98,7 @@ contract DaughterAuction is mortal{
                         coin.set_OliCoinBalance(_producer[q], int32(((GenBid[_producer[q]].rate-dgfee.get_dGFee(_producer[q])) * GenBid[_producer[q]].amount)));
                         //GSO reward
                         coin.set_OliCoinBalance(origin.get_gsoAddr(origin.get_oliTrafoid(_producer[q])), int32(dgfee.get_dGFee(_producer[q])*GenBid[_producer[q]].amount));
-                        dgfee.set_cktcamount(_producer[q], GenBid[_producer[q]].amount);
+                        dgfee.set_trafocamount(_producer[q], GenBid[_producer[q]].amount);
                     }
                 }
                 for (var r = 0; r < _consumer.length; r++){
@@ -118,7 +107,7 @@ contract DaughterAuction is mortal{
                         coin.set_OliCoinBalance(_consumer[r], -int32(((ConsBid[_consumer[r]].rate+dgfee.get_dGFee(_consumer[r])) * ConsBid[_consumer[r]].amount)));
                         //GSO Reward
                         coin.set_OliCoinBalance(origin.get_gsoAddr(origin.get_oliTrafoid(_consumer[r])), int32(dgfee.get_dGFee(_consumer[r])*GenBid[_consumer[r]].amount));
-                        dgfee.set_cktramount(_consumer[r], GenBid[_consumer[r]].amount);
+                        dgfee.set_traforamount(_consumer[r], GenBid[_consumer[r]].amount);
                     }
                 }
             break;
@@ -136,7 +125,8 @@ contract DaughterAuction is mortal{
         }
         maxRate=10;
         minRate=10;
-        dgfee.set_dgridFee(origin.get_oliTrafoid(tx.origin));
+        dgfee.set_tgridFee(67376);
+        dgfee.set_tgridFee(67377);
     }
 
     function get_producer() constant returns (address[]) {
