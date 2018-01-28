@@ -4,12 +4,12 @@ import "github.com/ethereum/solidity/std/mortal.sol";
 
 contract OliCoin is mortal{
     //Energy Balance Mapping
-    mapping (address => int) OliCoinBalance; //Produce->inc & Consume->dec
+    mapping (address => int32) OliCoinBalance; //Produce->inc & Consume->dec
     
     mapping (address =>bool) ContractAddress;
     
     // Triggered when tokens are transferred.
-    event Transfer(address indexed _from, address indexed _to, uint64 _value);
+    event Transfer(address indexed _from, address indexed _to, uint16 _value);
 
     //set contract access
     function set_ContractAddress(address _contract, bool _tf) onlyowner{
@@ -22,18 +22,18 @@ contract OliCoin is mortal{
     }
 
     //Update CoinBalance
-    function set_OliCoinBalance(address _account, int _change) onlyvalidcontract {
+    function set_OliCoinBalance(address _account, int32 _change) onlyvalidcontract {
         OliCoinBalance[_account] += _change;
     }
     
-    // Transfer the coins from owner's account to another account
-    function transfer(address _to, uint64 _amount) returns (bool success) {
+    // Transfer the balance from owner's account to another account
+    function transfer(address _to, uint16 _amount) returns (bool success) {
         if (OliCoinBalance[msg.sender] > 0
-        && uint64(OliCoinBalance[msg.sender]) >= _amount
+        && uint32(OliCoinBalance[msg.sender]) >= _amount
         && _amount > 0
-        && uint64(OliCoinBalance[_to]) + _amount > uint64(OliCoinBalance[_to])) {
-            OliCoinBalance[msg.sender] -= int128(_amount);
-            OliCoinBalance[_to] += int128(_amount);
+        && uint32(OliCoinBalance[_to]) + _amount > uint32(OliCoinBalance[_to])) {
+            OliCoinBalance[msg.sender] -= int32(_amount);
+            OliCoinBalance[_to] += int32(_amount);
             Transfer(msg.sender, _to, _amount);
             return true;
         }
@@ -41,9 +41,8 @@ contract OliCoin is mortal{
             return false;
         }
     }
-
-    //get coinbalance
-    function get_coinBalance(address caddress) constant returns (int) {
+    //
+    function get_coinBalance(address caddress) constant returns (int32) {
         return OliCoinBalance[caddress];
     }
 }
