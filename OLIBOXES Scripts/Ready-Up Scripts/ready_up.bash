@@ -9,8 +9,8 @@ bash <(curl -sL https://raw.githubusercontent.com/node-red/raspbian-deb-package/
 echo "...done."
 
 echo "Installing latest SmartPi Release"
-sudo su
-apt install apt-transport-https
+
+sudo apt install apt-transport-https
 wget https://repro.enerserve.eu/packages/Release.key && apt-key add Release.key && rm Release.key
 echo "deb https://repro.enerserve.eu/packages jessie main" > /etc/apt/sources.list.d/enerserve.list
 apt-get update
