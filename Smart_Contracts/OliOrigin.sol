@@ -8,7 +8,7 @@ contract OliOrigin is mortal{
     mapping (uint32 => address) GSO;
 
 
-    event newAddedOli(address paymentAddress, uint32 latOfLocation, uint32 longOfLocation, uint32 indexed trafoid, uint8 indexed ckt);
+    event newAddedOli(address paymentAddress, uint32 latOfLocation, uint32 longOfLocation);
     
     struct Details {
         uint32 latitude;
@@ -16,12 +16,12 @@ contract OliOrigin is mortal{
         uint32 trafoid;
         uint8 ckt; //In case of Prosumers' ckt rep. --> 1st ckt:0; 2nd ckt:1; In case of Trafo 4branches --> 4 ckt
         uint8 _type; //0:PV, 1:Wind, 2:CCP, 3:CHP, 4:Coal, 5:battery+, 6: battery-, 7:Consumer, 8:DNO
-        uint64[] _pload; // if _type=8 then index:0->trafoload
+        uint16[] _pload; // if _type=8 then index:0->trafoload
     }
 
-    function addOli(address oli, uint32 lat, uint32 long, uint32 trafo, uint8 ckt, uint8 typex, uint64[] pload) onlyowner{
+    function addOli(address oli, uint32 lat, uint32 long, uint32 trafo, uint8 ckt, uint8 typex, uint16[] pload) onlyowner{
         OliAddressMapping[oli] = Details(lat, long, trafo, ckt, typex, pload);
-        newAddedOli(oli, lat, long, trafo, ckt);
+        newAddedOli(oli, lat, long);
         if (typex==8){
             GSO[trafo]=oli;
         }
@@ -32,7 +32,7 @@ contract OliOrigin is mortal{
         return OliAddressMapping[_account]._type;
     }
     //Oli amount passing to Daughter Auction
-    function get_oliPeakLoad(address _account, uint8 _index) constant returns (uint64) {
+    function get_oliPeakLoad(address _account, uint8 _index) constant returns (uint16) {
         return OliAddressMapping[_account]._pload[_index];
     }
 
