@@ -28,9 +28,9 @@ while 1:
                                 my_list.append(power)
                                 pT=str(power)+"?"+str(timestamp)
                                 print power
-        msgs =[{'topic':topicP,'payload':"Phase1:"+str(my_list[0])},(topicP,"Pha                                                                                                             se2:"+str(my_list[1]),0,False),(topicP,"Phase3:"+str(my_list[2])),(topicP,"Phase                                                                                                             4:"+str(my_list[3])),(topicP,"Timestamp:"+str(timestamp))]
-        publish.multiple(msgs,hostname=host, port=port, auth={'username':usernam                                                                                                             e,'password':password})
-        publish.single(topicE,payload=str(energy),hostname=host,port=port,auth={                                                                                                             'username':username,'password':password})
+        msgs =[{'topic':topicP,'payload':"Phase1:"+str(my_list[0])},(topicP,"Phase2:"+str(my_list[1]),0,False),(topicP,"Phase3:"+str(my_list[2])),(topicP,"Phase                                                                                                             4:"+str(my_list[3])),(topicP,"Timestamp:"+str(timestamp))]
+        publish.multiple(msgs,hostname=host, port=port, auth={'username':username,'password':password})
+        publish.single(topicE,payload=str(energy),hostname=host,port=port,auth={'username':username,'password':password})
         print("Done "+topicP)
         print("Done "+topicE)
         print "Energy="+energy
