@@ -17,6 +17,12 @@ networks: {
 		port:8545,
 		network_id: "*",
 		gas: 4612388
+	},
+	toba: {
+		host: "127.0.0.1",
+		port:8545,
+		network_id: "*",
+		gas: 4612388
 	}
   }
 };
