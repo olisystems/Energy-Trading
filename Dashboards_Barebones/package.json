@@ -1,0 +1,19 @@
+{
+  "name": "web3_nodejs",
+  "version": "1.0.0",
+  "description": "A node.js project that interacts with smart contracts on a ETH-Network based on Web3",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "pg-promise": "^8.2.2",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2",
+    "web3": "github:ethereum/web3.js"
+  }
+}

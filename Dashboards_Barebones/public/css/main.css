@@ -1,0 +1,116 @@
+body {
+  padding-top: 50px;
+  font-family: 'myFirstFont';
+}
+
+.header h1 {
+  position: relative;
+  top: 18px;
+  left: 10px;
+}
+
+.navbar {
+  background-color: #154360;
+  color: white;
+}
+
+.container {
+  align-content: center;
+}
+
+.headalign {
+  text-align: center;
+  margin: 30px;
+  color: orange;
+}
+
+/* .img-fluid {
+  width: 100%;
+} */
+
+.card-block {
+  display: table;
+  margin: auto;
+}
+
+.card-deck {
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  padding: 10px;
+  background: #154360;
+  color: white;
+}
+
+button,
+p {
+  position: center;
+  margin: 10px;
+  white-space: normal !important;
+  word-wrap: break-word;
+}
+
+.oliCharts {
+  width: 100% !important;
+  position: center;
+  word-break: break-all;
+  word-wrap: break-word;
+  padding: 10px;
+}
+
+div.scroll {
+  float: left;
+  overflow-y: auto;
+  height: 200px;
+}
+
+.card,
+#map {
+  overflow: hidden;
+  box-shadow: 0 6px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  -webkit-transition: .25s box-shadow;
+  transition: .25s box-shadow;
+}
+
+.card:focus {
+  box-shadow: 0 6px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+}
+
+.table {
+  border-radius: 5px;
+  width: 50%;
+  margin: 0px auto;
+  table-layout: fixed;
+  font-size: 12px;
+}
+
+table tbody,
+table thead {
+  display: block;
+}
+
+table tbody {
+  overflow: auto;
+  height: 200px;
+}
+
+th,
+td {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#map {
+  height: 100%;
+  width: 100% !important;
+  position: center;
+  margin: auto;
+  margin-top: 20px;
+}
+
+.myButton {
+  justify-content: center;
+}
